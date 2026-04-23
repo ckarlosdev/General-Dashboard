@@ -1,0 +1,21 @@
+.rbc-time-view .rbc-time-gutter,
+.rbc-time-view .rbc-time-header-gutter {
+  flex: 0 0 75px !important;
+  min-width: 75px !important;
+  max-width: 75px !important;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.rbc-month-view .rbc-event {
+  min-height: 14px !important;
+  padding: 0 !important;
+  margin-top: 1px !important;
+}
+
+/* Ajusta el texto interno para que no se corte por el padding */
+.rbc-event-content {
+  font-size: 10px !important;
+  line-height: 14px !important;
+  overflow: hidden;
+}

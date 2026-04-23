@@ -1,0 +1,10 @@
+/* Un modal que ocupe el 90% del ancho de la pantalla */
+.modal-90w {
+  width: 60%;
+  max-width: none !important; /* Forzamos a que ignore el límite por defecto de Bootstrap */
+}
+
+/* Opcional: Si quieres que también sea muy alto */
+.modal-full-height {
+  height: 80vh;
+}
