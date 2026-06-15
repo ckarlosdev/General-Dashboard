@@ -4,11 +4,21 @@ import {
   type EventProps,
   type View,
 } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay, startOfMonth, endOfMonth, endOfWeek } from "date-fns";
+import {
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  startOfMonth,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  endOfDay,
+} from "date-fns";
 import { enUS } from "date-fns/locale";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import "../styles/general.css";
 import type { MyJobEvent } from "../types";
 import AgendaView from "./events/AgendaView";
@@ -38,10 +48,10 @@ function CalendarView({}: Props) {
   const { jobsSelected, clearSelected } = useAssignmentStore();
 
   const {
-    view,
-    setView,
-    date,
-    setDate,
+    view: storeView,
+    setView: setStoreView,
+    date: storeDate,
+    setDate: setStoreDate,
     setCurrentRange,
     currentRange,
     setShowJobModal,
@@ -49,6 +59,10 @@ function CalendarView({}: Props) {
     selectedJobId,
     isJobFocusMode,
   } = useCalendarStore();
+
+  // ESTADOS LOCALES: Evitan el desfase de renderizado sincrónico de RBC
+  const [localView, setLocalView] = useState<View>(storeView);
+  const [localDate, setLocalDate] = useState<Date>(storeDate);
 
   const { start, end } = currentRange;
 
@@ -61,53 +75,52 @@ function CalendarView({}: Props) {
 
   const handleSelectEvent = useCallback(
     (event: any) => {
-      setDate(new Date(event.start));
+      const eventDate = new Date(event.start);
+      setStoreDate(eventDate);
+      setLocalDate(eventDate);
       setJobSelected(event.jobsId);
       setShowJobModal(true);
     },
-    [setDate, setJobSelected, setShowJobModal],
+    [setStoreDate, setLocalDate, setJobSelected, setShowJobModal],
   );
 
-  const components = {
-    event: ({ event }: EventProps<MyJobEvent>) => {
-      if (view === "month") {
-        // Vista super pequeña solo con ID
-        return <MonthView event={event} />;
-      }
+  const components = useMemo(
+    () => ({
+      event: ({ event }: EventProps<MyJobEvent>) => {
+        switch (localView) {
+          case "month":
+            return <MonthView event={event} />;
+          case "week":
+            return <WeekView event={event} />;
+          case "day":
+            return <DayView event={event} />;
+          case "agenda":
+            return <AgendaView event={event} />;
+          default:
+            return <span>{event.title}</span>;
+        }
+      },
+    }),
+    [localView],
+  );
 
-      if (view === "week") {
-        return <WeekView event={event} />;
-      }
-
-      if (view === "day") {
-        return <DayView event={event} />;
-      }
-
-      if (view === "agenda") {
-        return <AgendaView event={event} />;
-      }
-
-      return <span>{event.title}</span>;
-    },
-  };
-
-  const eventPropGetter = () => {
-    const isMonth = view === "month";
+  const eventPropGetter = useCallback(() => {
+    const isMonth = localView === "month";
     return {
       style: {
-        backgroundColor: isMonth ? "#3174ad" : "#f8f9fa", // Azul en mes, gris muy claro en día
+        backgroundColor: isMonth ? "#3174ad" : "#f8f9fa",
         borderRadius: isMonth ? "12px" : "4px",
         opacity: isMonth ? 0.8 : 1,
-        color: isMonth ? "white" : "#212529", // Texto blanco en mes, oscuro en día
+        color: isMonth ? "white" : "#212529",
         border: isMonth ? "none" : "1px solid #dee2e6",
-        borderLeft: isMonth ? "none" : "4px solid #3174ad", // Línea azul lateral en vista día
+        borderLeft: isMonth ? "none" : "4px solid #3174ad",
         display: "block",
         padding: isMonth ? "0px 5px" : "8px",
         height: isMonth ? "18px" : "auto",
         overflow: "hidden",
       },
     };
-  };
+  }, [localView]);
 
   const filteredEvents = useMemo(() => {
     if (!events) return [];
@@ -117,119 +130,135 @@ function CalendarView({}: Props) {
         if (!selectedJobId) return false;
         return event.jobsId === selectedJobId;
       }
-
       return jobsSelected.includes(event.jobsId);
     });
   }, [jobsSelected, events, isJobFocusMode, selectedJobId]);
 
-  // const handleRangeChange = useCallback(
-  //   (range: Date[] | { start: Date; end: Date }) => {
-  //     if (view === "month" || view === "agenda") {
-  //       const start = Array.isArray(range) ? range[0] : range.start;
-  //       const end = Array.isArray(range) ? range[range.length - 1] : range.end;
+  // UNIFICADO: Un solo Effect controla y sincroniza el rango cada vez que cambia la vista o la fecha
+  useEffect(() => {
+    let s: Date;
+    let e: Date;
 
-  //       const normalizedStart = new Date(start);
-  //       normalizedStart.setHours(0, 0, 0, 0);
-  //       const normalizedEnd = new Date(end);
-  //       normalizedEnd.setHours(23, 59, 59, 999);
+    if (localView === "day") {
+      s = startOfDay(localDate);
+      e = endOfDay(localDate);
+    } else if (localView === "week") {
+      s = startOfWeek(localDate, { weekStartsOn: 1 });
+      e = new Date(s);
+      e.setDate(s.getDate() + 6);
+      e.setHours(23, 59, 59, 999);
+    } else {
+      // month o agenda
+      const monthStart = startOfMonth(localDate);
+      const monthEnd = endOfMonth(localDate);
+      s = startOfWeek(monthStart, { weekStartsOn: 1 });
+      e = endOfWeek(monthEnd, { weekStartsOn: 1 });
+    }
 
-  //       setCurrentRange({ start: normalizedStart, end: normalizedEnd });
-  //     }
-  //   },
-  //   [view, setCurrentRange],
-  // );
+    const hasChanged =
+      !currentRange ||
+      currentRange.start.getTime() !== s.getTime() ||
+      currentRange.end.getTime() !== e.getTime();
 
-  const handleRangeChange = useCallback(
-    (range: Date[] | { start: Date; end: Date }) => {
-      // RBC envía un array en Month y Week, y un objeto en Day
-      let s: Date, e: Date;
+    if (hasChanged) {
+      setCurrentRange({ start: s, end: e });
+    }
 
-      if (Array.isArray(range)) {
-        s = range[0];
-        e = range[range.length - 1];
-      } else {
-        s = range.start;
-        e = range.end;
-      }
+    // B) Controlar la Vista (Evita que setView explote)
+    if (storeView !== localView) {
+      setStoreView(localView);
+    }
 
-      const normalizedStart = new Date(s);
-      normalizedStart.setHours(0, 0, 0, 0);
-      const normalizedEnd = new Date(e);
-      normalizedEnd.setHours(23, 59, 59, 999);
+    // C) Controlar la Fecha (Evita que setStoreDate explote al hacer clic en eventos)
+    // Comparamos el timestamp (getTime) porque dos objetos Date diferentes en memoria fallan al hacer !==
+    if (!storeDate || storeDate.getTime() !== localDate.getTime()) {
+      setStoreDate(localDate);
+    }
+  }, [localView, localDate, setCurrentRange, setStoreView, setStoreDate]);
 
-      setCurrentRange({ start: normalizedStart, end: normalizedEnd });
+  const handleNavigate = useCallback(
+    (newDate: Date) => {
+      setLocalDate(newDate);
+      clearSelected();
     },
-    [setCurrentRange], // Quitamos 'view' de aquí para que no dependa de él
+    [clearSelected],
+  );
+
+  const handleView = useCallback(
+    (newView: View) => {
+      setLocalView(newView);
+      clearSelected();
+    },
+    [clearSelected],
+  );
+
+  const handleSelectSlot = useCallback(
+    (slotInfo: { start: Date }) => {
+      setLocalDate(slotInfo.start);
+      clearSelected();
+    },
+    [clearSelected],
   );
 
   useEffect(() => {
-    if (view === "day" || view === "week") {
-      let s: Date, e: Date;
+    setLocalView(storeView);
+    setLocalDate(storeDate);
+  }, [storeView, storeDate]);
 
-      if (view === "day") {
-        // Creamos la fecha base
-        s = new Date(date);
-        s.setHours(0, 0, 0, 0); // Inicio absoluto del día
+  useEffect(() => {
+    let s: Date;
+    let e: Date;
 
-        e = new Date(date);
-        e.setHours(23, 59, 59, 999); // Fin absoluto del día
-      } else {
-        // week
-        s = startOfWeek(date, { weekStartsOn: 1 });
-        s.setHours(0, 0, 0, 0);
-
-        e = new Date(s);
-        e.setDate(s.getDate() + 6);
-        e.setHours(23, 59, 59, 999);
-      }
-      setCurrentRange({ start: s, end: e });
-    }
-  }, [date, view, setCurrentRange]);
-
-  const handleNavigate = (newDate: Date) => {
-    setDate(newDate);
-    clearSelected();
-    if (view === "day") {
-      const s = new Date(newDate);
-      s.setHours(0, 0, 0, 0);
-      const e = new Date(newDate);
+    if (localView === "day") {
+      s = startOfDay(localDate);
+      e = endOfDay(localDate);
+    } else if (localView === "week") {
+      s = startOfWeek(localDate, { weekStartsOn: 1 });
+      e = new Date(s);
+      e.setDate(s.getDate() + 6);
       e.setHours(23, 59, 59, 999);
-      setCurrentRange({ start: s, end: e });
+    } else {
+      const monthStart = startOfMonth(localDate);
+      const monthEnd = endOfMonth(localDate);
+      s = startOfWeek(monthStart, { weekStartsOn: 1 });
+      e = endOfWeek(monthEnd, { weekStartsOn: 1 });
     }
-  };
 
-  // const handleView = (newView: View) => {
-  //   setView(newView);
-  //   clearSelected();
-  // };
-
-  const handleView = (newView: View) => {
-    setView(newView);
-    clearSelected();
-
-    if (newView === "month") {
-      const s = startOfMonth(date);
-      const e = endOfMonth(date);
-      setCurrentRange({
-        start: startOfWeek(s, { weekStartsOn: 1 }),
-        end: endOfWeek(e, { weekStartsOn: 1 }),
-      });
-    }
-  };
-
-  const handleSelectSlot = (slotInfo: { start: Date }) => {
-    setDate(slotInfo.start);
-    clearSelected();
-  };
-
-  if (isLoading) return <span>Loading events...</span>;
-  // if (isError) return <span style={{ color: "red" }}> Error </span>;
-  // console.log(currentRange);
+    setCurrentRange({ start: s, end: e });
+  }, [localView, localDate, setCurrentRange]);
 
   return (
-    <div style={{ height: "700px", backgroundColor: "white", padding: "5px" }}>
+    <div
+      style={{
+        height: "700px",
+        backgroundColor: "white",
+        padding: "5px",
+        position: "relative",
+      }}
+    >
+      {isLoading && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(255, 255, 255, 0.6)",
+            zIndex: 5,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontWeight: "bold",
+            color: "#3174ad",
+          }}
+        >
+          Loading events...
+        </div>
+      )}
+
       <Calendar
-        selectable={true} // <-- OBLIGATORIO para poder hacer clic en los cuadros
+        selectable={true}
         longPressThreshold={1}
         onSelectSlot={handleSelectSlot}
         eventPropGetter={eventPropGetter}
@@ -240,14 +269,13 @@ function CalendarView({}: Props) {
         formats={calendarFormats}
         culture="en-US"
         components={components}
-        view={view} // Vista actual (Mes, Semana, etc.)
-        date={date} // Fecha que se está mostrando
-        onNavigate={handleNavigate} // Función para cambiar de mes/día (Ant/Sig)
-        onView={handleView} // Función para cambiar entre Mes/Semana/Día
+        view={localView} // Controlado por estado local
+        date={localDate} // Controlado por estado local
+        onNavigate={handleNavigate}
+        onView={handleView}
         onSelectEvent={handleSelectEvent}
         dayLayoutAlgorithm="no-overlap"
         popup={true}
-        onRangeChange={handleRangeChange}
         messages={{
           next: "Next",
           previous: "Prev",

@@ -1,0 +1,682 @@
+[
+  {
+    "drId": 1194,
+    "drDate": "2026-06-10",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1188,
+    "drDate": "2026-06-09",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1181,
+    "drDate": "2026-06-08",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1174,
+    "drDate": "2026-06-04",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1166,
+    "drDate": "2026-06-03",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1161,
+    "drDate": "2026-06-02",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1160,
+    "drDate": "2026-06-01",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1153,
+    "drDate": "2026-05-29",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1144,
+    "drDate": "2026-05-28",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1141,
+    "drDate": "2026-05-27",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1134,
+    "drDate": "2026-05-26",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1127,
+    "drDate": "2026-05-21",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1125,
+    "drDate": "2026-05-20",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1122,
+    "drDate": "2026-05-19",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1115,
+    "drDate": "2026-05-18",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1114,
+    "drDate": "2026-05-14",
+    "foreman": ""
+  },
+  {
+    "drId": 1107,
+    "drDate": "2026-05-13",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1103,
+    "drDate": "2026-05-12",
+    "foreman": "Emmanuel Ortiz Reyes"
+  },
+  {
+    "drId": 1093,
+    "drDate": "2026-05-11",
+    "foreman": "Emmanuel Ortiz Reyes"
+  },
+  {
+    "drId": 1067,
+    "drDate": "2026-04-29",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1062,
+    "drDate": "2026-04-28",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1060,
+    "drDate": "2026-04-27",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1057,
+    "drDate": "2026-04-23",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1054,
+    "drDate": "2026-04-22",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1051,
+    "drDate": "2026-04-21",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1047,
+    "drDate": "2026-04-20",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1040,
+    "drDate": "2026-04-16",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1038,
+    "drDate": "2026-04-15",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1036,
+    "drDate": "2026-04-14",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1017,
+    "drDate": "2026-04-01",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 1013,
+    "drDate": "2026-03-31",
+    "foreman": "Emmanuel Ortiz Reyes"
+  },
+  {
+    "drId": 1002,
+    "drDate": "2026-03-26",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 1000,
+    "drDate": "2026-03-25",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 996,
+    "drDate": "2026-03-24",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 994,
+    "drDate": "2026-03-23",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 985,
+    "drDate": "2026-03-18",
+    "foreman": "Julio Nieto"
+  },
+  {
+    "drId": 984,
+    "drDate": "2026-03-16",
+    "foreman": "Julio Nieto"
+  },
+  {
+    "drId": 905,
+    "drDate": "2026-02-12",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 890,
+    "drDate": "2026-02-05",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 888,
+    "drDate": "2026-02-04",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 878,
+    "drDate": "2026-01-28",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 873,
+    "drDate": "2026-01-27",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 872,
+    "drDate": "2026-01-26",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 847,
+    "drDate": "2026-01-08",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 844,
+    "drDate": "2026-01-07",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 838,
+    "drDate": "2026-01-06",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 834,
+    "drDate": "2026-01-05",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 827,
+    "drDate": "2025-12-30",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 826,
+    "drDate": "2025-12-29",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 812,
+    "drDate": "2025-12-24",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 811,
+    "drDate": "2025-12-23",
+    "foreman": "Emmanuel Ortiz Reyes "
+  },
+  {
+    "drId": 810,
+    "drDate": "2025-12-22",
+    "foreman": "Emmanuel Ortiz Reyes"
+  },
+  {
+    "drId": 814,
+    "drDate": "2025-12-18",
+    "foreman": "Emmanuel Ortiz Reyes "
+  },
+  {
+    "drId": 813,
+    "drDate": "2025-12-17",
+    "foreman": "Emmanuel Ortiz Reyes "
+  },
+  {
+    "drId": 815,
+    "drDate": "2025-12-16",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 793,
+    "drDate": "2025-12-15",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 782,
+    "drDate": "2025-12-11",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 779,
+    "drDate": "2025-12-10",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 776,
+    "drDate": "2025-12-09",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 775,
+    "drDate": "2025-12-08",
+    "foreman": "Emmanuel Ortiz Reyes "
+  },
+  {
+    "drId": 761,
+    "drDate": "2025-12-04",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 758,
+    "drDate": "2025-12-03",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 754,
+    "drDate": "2025-12-02",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 746,
+    "drDate": "2025-12-01",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 745,
+    "drDate": "2025-11-26",
+    "foreman": "Emmanuel Ortiz Reyes"
+  },
+  {
+    "drId": 744,
+    "drDate": "2025-11-25",
+    "foreman": "Emmanuel Ortiz Reyes"
+  },
+  {
+    "drId": 732,
+    "drDate": "2025-11-24",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 722,
+    "drDate": "2025-11-20",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 714,
+    "drDate": "2025-11-19",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 710,
+    "drDate": "2025-11-18",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 703,
+    "drDate": "2025-11-17",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 692,
+    "drDate": "2025-11-13",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 685,
+    "drDate": "2025-11-12",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 677,
+    "drDate": "2025-11-11",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 673,
+    "drDate": "2025-11-10",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 666,
+    "drDate": "2025-11-06",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 663,
+    "drDate": "2025-11-05",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 658,
+    "drDate": "2025-11-04",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 651,
+    "drDate": "2025-11-03",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 647,
+    "drDate": "2025-10-31",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 643,
+    "drDate": "2025-10-30",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 637,
+    "drDate": "2025-10-29",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 629,
+    "drDate": "2025-10-28",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 624,
+    "drDate": "2025-10-27",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 618,
+    "drDate": "2025-10-24",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 614,
+    "drDate": "2025-10-23",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 610,
+    "drDate": "2025-10-22",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 606,
+    "drDate": "2025-10-21",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 605,
+    "drDate": "2025-10-20",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 599,
+    "drDate": "2025-10-16",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 594,
+    "drDate": "2025-10-15",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 587,
+    "drDate": "2025-10-14",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 581,
+    "drDate": "2025-10-13",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 573,
+    "drDate": "2025-10-09",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 567,
+    "drDate": "2025-10-08",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 563,
+    "drDate": "2025-10-07",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 558,
+    "drDate": "2025-10-06",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 552,
+    "drDate": "2025-10-02",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 547,
+    "drDate": "2025-10-01",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 542,
+    "drDate": "2025-09-30",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 534,
+    "drDate": "2025-09-29",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 530,
+    "drDate": "2025-09-25",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 525,
+    "drDate": "2025-09-24",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 520,
+    "drDate": "2025-09-23",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 512,
+    "drDate": "2025-09-22",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 505,
+    "drDate": "2025-09-18",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 499,
+    "drDate": "2025-09-17",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 495,
+    "drDate": "2025-09-16",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 492,
+    "drDate": "2025-09-15",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 489,
+    "drDate": "2025-09-11",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 484,
+    "drDate": "2025-09-10",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 483,
+    "drDate": "2025-09-09",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 480,
+    "drDate": "2025-09-08",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 477,
+    "drDate": "2025-09-05",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 475,
+    "drDate": "2025-09-04",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 471,
+    "drDate": "2025-09-03",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 468,
+    "drDate": "2025-09-02",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 466,
+    "drDate": "2025-08-28",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 462,
+    "drDate": "2025-08-27",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 458,
+    "drDate": "2025-08-26",
+    "foreman": "Deno D Teat "
+  },
+  {
+    "drId": 454,
+    "drDate": "2025-08-25",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 450,
+    "drDate": "2025-08-21",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 440,
+    "drDate": "2025-08-20",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 433,
+    "drDate": "2025-08-19",
+    "foreman": "Deno D Teat"
+  },
+  {
+    "drId": 430,
+    "drDate": "2025-08-18",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 424,
+    "drDate": "2025-08-14",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 418,
+    "drDate": "2025-08-13",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 414,
+    "drDate": "2025-08-12",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 408,
+    "drDate": "2025-08-11",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 405,
+    "drDate": "2025-08-07",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 399,
+    "drDate": "2025-08-06",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 394,
+    "drDate": "2025-08-05",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 390,
+    "drDate": "2025-08-04",
+    "foreman": "Cesar Cervantes"
+  },
+  {
+    "drId": 384,
+    "drDate": "2025-07-31",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 380,
+    "drDate": "2025-07-30",
+    "foreman": "Cesar Cervantes "
+  },
+  {
+    "drId": 378,
+    "drDate": "2025-07-29",
+    "foreman": "Cesar Cervantes "
+  }
+]

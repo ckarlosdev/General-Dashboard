@@ -22,7 +22,7 @@ export function useDailyReport(drId: number) {
 
 const queryPhotos = async (type: string, drId: number): Promise<Photo[]> => {
   const url = `v1/photo/type/${drId}?typeReport=${encodeURIComponent(type)}`;
-  console.log("🚀 Llamando a:", url);
+  // console.log("🚀 Llamando a:", url);
   const response = await api.get(url);
   return response.data;
 };

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { EventResponse } from "../types";
 import { api } from "./apiConfig";
 import { MapEventResponse } from "../utils/MapEventResponse";
-import { format } from "date-fns";
+import { addDays, format, isSameDay } from "date-fns";
 
 export function useEvents(
   startDate: Date,
@@ -10,10 +10,18 @@ export function useEvents(
   jobId: number | null,
   isFocusMode: boolean,
 ) {
+  // CORRECCIÓN AQUÍ: Si startDate y endDate son el mismo día (Vista de Día),
+  // le sumamos un día a la fecha de fin para la consulta de la API,
+  // así el backend buscará desde el 2026-06-15 00:00 hasta el 2026-06-16 00:00
+  const adjustedEndDate = isSameDay(startDate, endDate)
+    ? addDays(endDate, 1)
+    : endDate;
+
   const startStr = format(startDate, "yyyy-MM-dd");
-  const endStr = format(endDate, "yyyy-MM-dd");
-  
+  const endStr = format(adjustedEndDate, "yyyy-MM-dd");
+
   const query = useQuery({
+    // Mantén las strings ajustadas en la queryKey para que React Query sepa que el rango cambió
     queryKey: ["events", startStr, endStr, jobId, isFocusMode],
     queryFn: async () => {
       if (isFocusMode && jobId) {
@@ -27,7 +35,7 @@ export function useEvents(
       if (response.status === 204 || !response.data) return [];
       return response.data;
     },
-    select: (data: EventResponse[]) => data.map(MapEventResponse), 
+    select: (data: EventResponse[]) => data.map(MapEventResponse),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: false,

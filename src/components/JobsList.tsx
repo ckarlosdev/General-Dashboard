@@ -1,22 +1,21 @@
-import { ListGroup } from "react-bootstrap";
+import { Button, ListGroup } from "react-bootstrap";
 import useAssignmentStore from "../stores/useAssignmentStore";
 import { useEffect, useMemo, useRef } from "react";
 import { useEvents } from "../hooks/useCalendar";
 import useCalendarStore from "../stores/useCalendarStore";
 import { useJobs } from "../hooks/useJobs";
 import JobFocusFilter from "./JobFocusFilter";
+import useModalStore from "../stores/useModalStore";
+import { RiTimelineView } from "react-icons/ri";
 
 type Props = {};
 
 function JobsList({}: Props) {
-  const {
-    currentRange,
-    isJobFocusMode,
-    selectedJobId,
-  } = useCalendarStore();
+  const { currentRange, isJobFocusMode, selectedJobId } = useCalendarStore();
   const { toggleJobSelected, jobsSelected, setJobsSelected } =
     useAssignmentStore();
   const { data: jobsData } = useJobs();
+  const { openModal, setSelectedId } = useModalStore();
 
   const { data: events, isLoading } = useEvents(
     currentRange.start,
@@ -65,7 +64,6 @@ function JobsList({}: Props) {
     });
 
     return Array.from(registry.values());
-
   }, [events, jobsData, currentRange, isJobFocusMode, selectedJobId]);
 
   const uniqueJobsSorted = useMemo(() => {
@@ -124,34 +122,54 @@ function JobsList({}: Props) {
       }}
     >
       <JobFocusFilter />
+
       <ListGroup>
-        {uniqueJobsSorted.map((job) => (
-          <ListGroup.Item
-            as="li"
-            className="d-flex justify-content-between align-items-center"
-            action
-            // href={`link${job.jobNumber}`}
-            title={job.address}
-            key={job.id}
-            onClick={() => toggleJobSelected(job.id)}
-            active={jobsSelected.includes(job.id)}
-            style={{ cursor: "pointer" }}
-          >
-            <div className="ms-2 me-auto">
-              <div className="fw-bold">
-                {job.jobNumber}
-                {"-"}
-                {job.title}
-              </div>
-              <div
-                className="text-truncate"
-                style={{ fontSize: "15px", width: "240px" }}
-              >
-                {job.address}
-              </div>
-            </div>
+        {uniqueJobsSorted.length === 0 ? (
+          // 🔍 CASO VERDADERO: Qué mostrar si la lista está vacía
+          <ListGroup.Item className="text-center py-4 text-muted bg-light border-dashed">
+            <i
+              className="bi bi-folder-x d-block mb-2"
+              style={{ fontSize: "1.5rem" }}
+            ></i>
+            No Reports Data Found.
           </ListGroup.Item>
-        ))}
+        ) : (
+          // 📋 CASO FALSO: Tu .map actual para renderizar los ítems
+          uniqueJobsSorted.map((job) => (
+            <ListGroup.Item
+              // ... (todo tu código intacto)
+              as="li"
+              className="d-flex justify-content-between align-items-center"
+              action
+              title={job.address}
+              key={job.id}
+              onClick={() => toggleJobSelected(job.id)}
+              active={jobsSelected.includes(job.id)}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="ms-2 me-auto">
+                <div className="fw-bold">
+                  {job.jobNumber}
+                  {" - "}
+                  {job.title}
+                </div>
+              </div>
+              <Button
+                variant="link"
+                size="sm"
+                className="text-reset p-2 border-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedId(job.id);
+                  openModal("TIMELINE");
+                }}
+                title="Ver calendario"
+              >
+                <RiTimelineView size={20} />
+              </Button>
+            </ListGroup.Item>
+          ))
+        )}
       </ListGroup>
     </div>
   );

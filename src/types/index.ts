@@ -317,3 +317,14 @@ export type Photo = {
   name: string;
   type: string;
 };
+
+export interface TimelineItem {
+  drId: number;
+  drDate: string;
+  foreman: string;
+}
+
+export type GroupedData = Record<
+  string,
+  { dayLabel: string; drId: number; foreman: string; fullDate: string }[]
+>;

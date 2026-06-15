@@ -2,7 +2,7 @@ import { Form } from "react-bootstrap";
 import useCalendarStore from "../stores/useCalendarStore";
 import { useJobs } from "../hooks/useJobs";
 import { useGetEventsById } from "../hooks/useCalendar";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FiTarget } from "react-icons/fi";
 
 type Props = {};
@@ -19,6 +19,10 @@ function JobFocusFilter({}: Props) {
   const { data: allJobs } = useJobs();
   const { data: events } = useGetEventsById(selectedJobId ?? 0);
 
+  // 1. Estado local para el filtro de estatus
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [yearFilter, setYearFilter] = useState<string>("ALL");
+
   const hasJumped = useRef(false);
 
   const handleJobChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -29,14 +33,14 @@ function JobFocusFilter({}: Props) {
       return;
     }
 
-    // Preparamos el salto
     hasJumped.current = true;
     setSelectedJobId(jobId);
   };
 
   useEffect(() => {
+    if (!hasJumped.current) return;
+
     if (
-      hasJumped.current &&
       events &&
       events.length > 0 &&
       Number(events[0].jobsId) === Number(selectedJobId)
@@ -50,6 +54,7 @@ function JobFocusFilter({}: Props) {
         const targetDate = new Date(maxTimestamp);
 
         hasJumped.current = false;
+
         setDate(targetDate);
         setView("month");
       }
@@ -61,9 +66,75 @@ function JobFocusFilter({}: Props) {
     setIsJobFocusMode(active);
     if (!active) {
       setSelectedJobId(null);
+      setStatusFilter("ALL");
       hasJumped.current = false;
     }
   };
+
+  const statusList = useMemo(() => {
+    if (!allJobs) return [];
+    const statuses = allJobs
+      .map((j) => j.status)
+      .filter((status): status is string => !!status); // Evita nulos o undefined
+    return Array.from(new Set(statuses)); // Elimina duplicados
+  }, [allJobs]);
+
+  const yearsList = useMemo(() => {
+    if (!allJobs) return [];
+
+    const years = allJobs
+      .map((j) => {
+        if (!j.number || j.number.length < 2) return null;
+        const prefijo = j.number.substring(0, 2); // Toma los 2 primeros caracteres (ej: "24")
+        if (isNaN(Number(prefijo))) return null; // Asegura que sean números
+        return `20${prefijo}`; // Lo convierte en "2024"
+      })
+      .filter((year): year is string => !!year);
+
+    // Ordenar los años de más reciente a más antiguo
+    return Array.from(new Set(years)).sort((a, b) => b.localeCompare(a));
+  }, [allJobs]);
+
+  const jobsFilteredAndSorted = useMemo(() => {
+    if (!allJobs) return [];
+
+    let resultado = [...allJobs];
+
+    // Filtro A: Estatus
+    if (statusFilter !== "ALL") {
+      resultado = resultado.filter((j) => j.status === statusFilter);
+    }
+
+    // Filtro B: Año (NUEVO)
+    if (yearFilter !== "ALL") {
+      const dosDigitosAnio = yearFilter.substring(2, 4); // "2024" -> "24"
+      resultado = resultado.filter(
+        (j) => j.number && j.number.startsWith(dosDigitosAnio),
+      );
+    }
+
+    // Paso C: Ordenar
+    return resultado.sort((a, b) =>
+      (b.number || "").localeCompare(a.number || ""),
+    );
+  }, [allJobs, statusFilter, yearFilter]);
+
+  useEffect(() => {
+    if (selectedJobId) {
+      const jobActual = allJobs?.find((j) => j.jobsId === selectedJobId);
+      if (jobActual) {
+        const prefijoAnio = jobActual.number?.substring(0, 2);
+        const cumpleStatus =
+          statusFilter === "ALL" || jobActual.status === statusFilter;
+        const cumpleAnio =
+          yearFilter === "ALL" || yearFilter.endsWith(prefijoAnio || "---");
+
+        if (!cumpleStatus || !cumpleAnio) {
+          setSelectedJobId(null);
+        }
+      }
+    }
+  }, [statusFilter, yearFilter, selectedJobId, allJobs, setSelectedJobId]);
 
   return (
     <div className="mx-2 mb-4 p-3 rounded-3 border bg-white shadow-sm">
@@ -73,8 +144,7 @@ function JobFocusFilter({}: Props) {
           <div
             className={`me-2 p-1 rounded ${isJobFocusMode ? "bg-primary text-white" : "bg-light text-muted"}`}
           >
-            <i className="bi bi-target" style={{ fontSize: "0.9rem" }}></i>
-            <FiTarget style={{ fontSize: "0.9rem" }}/>
+            <FiTarget style={{ fontSize: "0.9rem" }} />
           </div>
           <span
             className="fw-bold text-dark"
@@ -94,6 +164,45 @@ function JobFocusFilter({}: Props) {
         />
       </div>
 
+      {/* FILTROS SECUNDARIOS (Estatus y Año uno al lado del otro) */}
+      <div className="row g-2 mb-2">
+        {/* Selector de Estatus */}
+        <div className="col-7">
+          <Form.Select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            disabled={!isJobFocusMode}
+            className={`border-0 bg-light py-1.5 shadow-none text-muted ${!isJobFocusMode ? "opacity-50" : ""}`}
+            style={{ fontSize: "0.75rem", borderRadius: "6px" }}
+          >
+            <option value="ALL">All Status</option>
+            {statusList.map((status) => (
+              <option key={status} value={status}>
+                {status.toUpperCase()}
+              </option>
+            ))}
+          </Form.Select>
+        </div>
+
+        {/* Selector de Año (NUEVO) */}
+        <div className="col-5">
+          <Form.Select
+            value={yearFilter}
+            onChange={(e) => setYearFilter(e.target.value)}
+            disabled={!isJobFocusMode}
+            className={`border-0 bg-light py-1.5 shadow-none text-muted ${!isJobFocusMode ? "opacity-50" : ""}`}
+            style={{ fontSize: "0.75rem", borderRadius: "6px" }}
+          >
+            <option value="ALL">All Years</option>
+            {yearsList.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </Form.Select>
+        </div>
+      </div>
+
       {/* Selector de Job */}
       <div className="position-relative">
         <Form.Select
@@ -108,48 +217,19 @@ function JobFocusFilter({}: Props) {
             transition: "all 0.2s ease",
           }}
         >
-          <option value="">Select a project...</option>
-          {allJobs?.map((j) => (
+          <option value="">
+            {jobsFilteredAndSorted.length === 0 && isJobFocusMode
+              ? "No projects found..."
+              : "Select a project..."}
+          </option>
+          {jobsFilteredAndSorted.map((j) => (
             <option key={j.jobsId} value={j.jobsId!}>
-              {j.number} — {j.name}
+              {j.number} - {j.name}
             </option>
           ))}
         </Form.Select>
-
-        {/* Indicador visual cuando está desactivado */}
-        {/* {!isJobFocusMode && (
-          <div
-            className="position-absolute top-100 start-0 mt-1 ps-1 text-muted fw-light"
-            style={{ fontSize: "0.7rem" }}
-          >
-            <i className="bi bi-info-circle me-1"></i>
-            Enable to filter by specific job
-          </div>
-        )} */}
       </div>
     </div>
-    // <div className="d-flex align-items-center gap-3 mb-3 p-2 bg-light rounded">
-    //   <Form.Check
-    //     type="switch"
-    //     label=""
-    //     checked={isJobFocusMode}
-    //     onChange={handleSwitchChange}
-    //   />
-
-    //   <Form.Select
-    //     value={selectedJobId || ""}
-    //     onChange={handleJobChange}
-    //     disabled={!isJobFocusMode}
-    //   >
-    //     <option value="">Select job...</option>
-    //     {allJobs?.map((j) => (
-    //       <option
-    //         key={j.jobsId}
-    //         value={j.jobsId!}
-    //       >{`${j.number} - ${j.name}`}</option>
-    //     ))}
-    //   </Form.Select>
-    // </div>
   );
 }
 

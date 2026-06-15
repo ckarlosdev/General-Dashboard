@@ -33,7 +33,7 @@ function DailyModal({}: Props) {
     ? `https://drive.google.com/drive/folders/${folderId}`
     : "https://drive.google.com/drive/folders/15FnBtRLDSclJM9ewghViWrdNO6ORM5Ia";
 
-  console.log("photos: ", photos, folderId);
+  // console.log("photos: ", photos, folderId);
 
   return (
     <>

@@ -11,6 +11,7 @@ import useModalStore from "./stores/useModalStore";
 import ChecklistModal from "./components/modals/ChecklistModal";
 import SilicaModal from "./components/modals/SilicaModal";
 import DemoModal from "./components/modals/DemoModal";
+import TLModal from "./components/TLModal";
 
 function App() {
   const [isOpen, setIsOpen] = useState(true);
@@ -70,6 +71,7 @@ function App() {
       {show && activeModal === "CHECKLIST" && <ChecklistModal />}
       {show && activeModal === "SILICA" && <SilicaModal />}
       {show && activeModal === "DEMO" && <DemoModal />}
+      {show && activeModal === "TIMELINE" && <TLModal />}
     </>
   );
 }

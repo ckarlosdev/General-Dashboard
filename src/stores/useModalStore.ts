@@ -7,7 +7,7 @@ type modalStore = {
   selectedId: number | null;
 
   openModal: (
-    type: "DAILY" | "HAZARD" | "SILICA" | "CHECKLIST" | "DEMO",
+    type: "DAILY" | "HAZARD" | "SILICA" | "CHECKLIST" | "DEMO" | "TIMELINE",
   ) => void;
   closeModal: () => void;
   setSelectedId: (id: number) => void;
