@@ -2,7 +2,6 @@ import { Accordion, Button, Modal } from "react-bootstrap";
 import useModalStore from "../stores/useModalStore";
 import { useJobs } from "../hooks/useJobs";
 import { getGroupedMonths } from "../utils/reportUtils";
-// import data from "../mocks/timeLineData.json";
 import { IoFolderOpenOutline } from "react-icons/io5";
 import { useTimeline } from "../hooks/useTotals";
 import useCalendarStore from "../stores/useCalendarStore";
@@ -17,26 +16,21 @@ function TLModal({}: Props) {
   const jobData = jobs?.find((job) => job.jobsId === selectedId);
 
   const { data } = useTimeline(jobData?.number!!);
-
-  //   console.log(jobData);
-
   const groupedMonths = getGroupedMonths(data!!);
 
-  //   console.log(groupedMonths);
-
   const handleDayButtonClick = (fullDateStr: string) => {
-    // 1. TypeScript se quejaba porque date-fns no acepta strings.
-    // Al añadir "T00:00:00" evitamos desfases de zona horaria (UTC vs Local)
     const fechaObjeto = new Date(fullDateStr + "T00:00:00");
 
     // 2. Calculamos el rango de 24 horas matemáticamente en el acto
     const s = startOfDay(fechaObjeto);
     const e = endOfDay(fechaObjeto);
 
-    // 3. Despachamos todo al store de un solo golpe
     setDate(fechaObjeto);
     setView("day");
-    setCurrentRange({ start: s, end: e });
+    setCurrentRange({
+      start: s,
+      end: e,
+    });
   };
 
   return (

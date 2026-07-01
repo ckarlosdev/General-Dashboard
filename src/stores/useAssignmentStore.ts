@@ -25,9 +25,21 @@ const useAssignmentStore = create<assignmentStore>()((set, get) => ({
       typeView: type,
     })),
   setJobsSelected: (jobIds) =>
-    set(() => ({
-      jobsSelected: jobIds,
-    })),
+    set((state) => {
+      const current = state.jobsSelected;
+
+      const same =
+        current.length === jobIds.length &&
+        current.every((id) => jobIds.includes(id));
+
+      if (same) {
+        return state;
+      }
+
+      return {
+        jobsSelected: jobIds,
+      };
+    }),
   toggleJobSelected: (jobId) =>
     set((state) => {
       const isAlreadySelected = state.jobsSelected.includes(jobId);
@@ -51,7 +63,13 @@ const useAssignmentStore = create<assignmentStore>()((set, get) => ({
     focusId: number | null,
   ) => {
     if (isFocus && focusId) {
-      set({ jobsSelected: [focusId] });
+      const current = get().jobsSelected;
+
+      if (current.length !== 1 || current[0] !== focusId) {
+        set({ jobsSelected: [focusId] });
+      }
+
+      return;
     } else {
       const current = get().jobsSelected;
       const hasChanged =

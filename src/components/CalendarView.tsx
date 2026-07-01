@@ -18,7 +18,7 @@ import {
 import { enUS } from "date-fns/locale";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useCallback, useMemo, useEffect, useState } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import "../styles/general.css";
 import type { MyJobEvent } from "../types";
 import AgendaView from "./events/AgendaView";
@@ -48,10 +48,10 @@ function CalendarView({}: Props) {
   const { jobsSelected, clearSelected } = useAssignmentStore();
 
   const {
-    view: storeView,
-    setView: setStoreView,
-    date: storeDate,
-    setDate: setStoreDate,
+    view,
+    setView,
+    date,
+    setDate,
     setCurrentRange,
     currentRange,
     setShowJobModal,
@@ -59,10 +59,6 @@ function CalendarView({}: Props) {
     selectedJobId,
     isJobFocusMode,
   } = useCalendarStore();
-
-  // ESTADOS LOCALES: Evitan el desfase de renderizado sincrónico de RBC
-  const [localView, setLocalView] = useState<View>(storeView);
-  const [localDate, setLocalDate] = useState<Date>(storeDate);
 
   const { start, end } = currentRange;
 
@@ -76,36 +72,41 @@ function CalendarView({}: Props) {
   const handleSelectEvent = useCallback(
     (event: any) => {
       const eventDate = new Date(event.start);
-      setStoreDate(eventDate);
-      setLocalDate(eventDate);
+
+      setDate(eventDate);
       setJobSelected(event.jobsId);
       setShowJobModal(true);
     },
-    [setStoreDate, setLocalDate, setJobSelected, setShowJobModal],
+    [setDate, setJobSelected, setShowJobModal],
   );
 
   const components = useMemo(
     () => ({
       event: ({ event }: EventProps<MyJobEvent>) => {
-        switch (localView) {
+        switch (view) {
           case "month":
             return <MonthView event={event} />;
+
           case "week":
             return <WeekView event={event} />;
+
           case "day":
             return <DayView event={event} />;
+
           case "agenda":
             return <AgendaView event={event} />;
+
           default:
             return <span>{event.title}</span>;
         }
       },
     }),
-    [localView],
+    [view],
   );
 
   const eventPropGetter = useCallback(() => {
-    const isMonth = localView === "month";
+    const isMonth = view === "month";
+
     return {
       style: {
         backgroundColor: isMonth ? "#3174ad" : "#f8f9fa",
@@ -118,114 +119,93 @@ function CalendarView({}: Props) {
         padding: isMonth ? "0px 5px" : "8px",
         height: isMonth ? "18px" : "auto",
         overflow: "hidden",
+        cursor: "pointer",
       },
     };
-  }, [localView]);
+  }, [view]);
 
   const filteredEvents = useMemo(() => {
     if (!events) return [];
 
     return events.filter((event) => {
       if (isJobFocusMode) {
-        if (!selectedJobId) return false;
+        if (!selectedJobId) {
+          return false;
+        }
+
         return event.jobsId === selectedJobId;
       }
+
       return jobsSelected.includes(event.jobsId);
     });
   }, [jobsSelected, events, isJobFocusMode, selectedJobId]);
 
-  // UNIFICADO: Un solo Effect controla y sincroniza el rango cada vez que cambia la vista o la fecha
+  
   useEffect(() => {
-    let s: Date;
-    let e: Date;
+    let startRange: Date;
+    let endRange: Date;
 
-    if (localView === "day") {
-      s = startOfDay(localDate);
-      e = endOfDay(localDate);
-    } else if (localView === "week") {
-      s = startOfWeek(localDate, { weekStartsOn: 1 });
-      e = new Date(s);
-      e.setDate(s.getDate() + 6);
-      e.setHours(23, 59, 59, 999);
+    if (view === "day") {
+      startRange = startOfDay(date);
+      endRange = endOfDay(date);
+    } else if (view === "week") {
+      startRange = startOfWeek(date, {
+        weekStartsOn: 1,
+      });
+
+      endRange = endOfWeek(date, {
+        weekStartsOn: 1,
+      });
     } else {
-      // month o agenda
-      const monthStart = startOfMonth(localDate);
-      const monthEnd = endOfMonth(localDate);
-      s = startOfWeek(monthStart, { weekStartsOn: 1 });
-      e = endOfWeek(monthEnd, { weekStartsOn: 1 });
+      startRange = startOfWeek(startOfMonth(date), {
+        weekStartsOn: 1,
+      });
+
+      endRange = endOfWeek(endOfMonth(date), {
+        weekStartsOn: 1,
+      });
     }
 
-    const hasChanged =
-      !currentRange ||
-      currentRange.start.getTime() !== s.getTime() ||
-      currentRange.end.getTime() !== e.getTime();
+    const sameRange =
+      currentRange.start.getTime() === startRange.getTime() &&
+      currentRange.end.getTime() === endRange.getTime();
 
-    if (hasChanged) {
-      setCurrentRange({ start: s, end: e });
+    if (!sameRange) {
+      setCurrentRange({
+        start: startRange,
+        end: endRange,
+      });
     }
-
-    // B) Controlar la Vista (Evita que setView explote)
-    if (storeView !== localView) {
-      setStoreView(localView);
-    }
-
-    // C) Controlar la Fecha (Evita que setStoreDate explote al hacer clic en eventos)
-    // Comparamos el timestamp (getTime) porque dos objetos Date diferentes en memoria fallan al hacer !==
-    if (!storeDate || storeDate.getTime() !== localDate.getTime()) {
-      setStoreDate(localDate);
-    }
-  }, [localView, localDate, setCurrentRange, setStoreView, setStoreDate]);
+  }, [view, date]);
 
   const handleNavigate = useCallback(
     (newDate: Date) => {
-      setLocalDate(newDate);
+      setDate(newDate);
+
       clearSelected();
     },
-    [clearSelected],
+    [setDate, clearSelected],
   );
 
   const handleView = useCallback(
     (newView: View) => {
-      setLocalView(newView);
+      setView(newView);
+
       clearSelected();
     },
-    [clearSelected],
+    [setView, clearSelected],
   );
 
   const handleSelectSlot = useCallback(
-    (slotInfo: { start: Date }) => {
-      setLocalDate(slotInfo.start);
-      clearSelected();
+    (slotInfo: { start: Date; action: "select" | "click" | "doubleClick" }) => {
+      if (slotInfo.action === "click" || slotInfo.action === "select") {
+        setDate(slotInfo.start);
+
+        clearSelected();
+      }
     },
-    [clearSelected],
+    [setDate, clearSelected],
   );
-
-  useEffect(() => {
-    setLocalView(storeView);
-    setLocalDate(storeDate);
-  }, [storeView, storeDate]);
-
-  useEffect(() => {
-    let s: Date;
-    let e: Date;
-
-    if (localView === "day") {
-      s = startOfDay(localDate);
-      e = endOfDay(localDate);
-    } else if (localView === "week") {
-      s = startOfWeek(localDate, { weekStartsOn: 1 });
-      e = new Date(s);
-      e.setDate(s.getDate() + 6);
-      e.setHours(23, 59, 59, 999);
-    } else {
-      const monthStart = startOfMonth(localDate);
-      const monthEnd = endOfMonth(localDate);
-      s = startOfWeek(monthStart, { weekStartsOn: 1 });
-      e = endOfWeek(monthEnd, { weekStartsOn: 1 });
-    }
-
-    setCurrentRange({ start: s, end: e });
-  }, [localView, localDate, setCurrentRange]);
 
   return (
     <div
@@ -240,17 +220,12 @@ function CalendarView({}: Props) {
         <div
           style={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(255, 255, 255, 0.6)",
+            inset: 0,
+            backgroundColor: "rgba(255,255,255,.6)",
             zIndex: 5,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            fontWeight: "bold",
-            color: "#3174ad",
           }}
         >
           Loading events...
@@ -258,23 +233,23 @@ function CalendarView({}: Props) {
       )}
 
       <Calendar
-        selectable={true}
-        longPressThreshold={1}
-        onSelectSlot={handleSelectSlot}
-        eventPropGetter={eventPropGetter}
+        longPressThreshold={500}
+        dayLayoutAlgorithm="overlap"
         localizer={localizer}
         events={filteredEvents}
         startAccessor="start"
         endAccessor="end"
-        formats={calendarFormats}
-        culture="en-US"
-        components={components}
-        view={localView} // Controlado por estado local
-        date={localDate} // Controlado por estado local
+        view={view}
+        date={date}
         onNavigate={handleNavigate}
         onView={handleView}
         onSelectEvent={handleSelectEvent}
-        dayLayoutAlgorithm="no-overlap"
+        onSelectSlot={handleSelectSlot}
+        selectable={true}
+        eventPropGetter={eventPropGetter}
+        components={components}
+        formats={calendarFormats}
+        culture="en-US"
         popup={true}
         messages={{
           next: "Next",

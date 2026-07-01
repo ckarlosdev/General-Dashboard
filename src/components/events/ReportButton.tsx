@@ -9,6 +9,12 @@ function ReportButton({ ind, isDone, reportId }: Props) {
   const { setSelectedId, openModal } = useModalStore();
 
   const handleSetReport = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+
+    if (e.type === "touchstart") {
+      e.preventDefault();
+    }
+
     const reportTypeMap: Record<string, any> = {
       Daily: "DAILY",
       Hazard: "HAZARD",
@@ -30,11 +36,15 @@ function ReportButton({ ind, isDone, reportId }: Props) {
   };
 
   return (
-    <div>
+    <div
+      onClick={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+    >
       <Button
         key={ind.key}
         title={ind.name} // Al pasar el mouse muestra el nombre completo
         onClick={(e) => handleSetReport(e)}
+        onTouchStart={handleSetReport}
         style={{
           width: "30px",
           height: "30px",

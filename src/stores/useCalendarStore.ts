@@ -1,7 +1,7 @@
 import { Views, type View } from "react-big-calendar";
 import type { CurrentRange } from "../types";
 import { create } from "zustand";
-import { endOfMonth, format, startOfMonth } from "date-fns";
+import { endOfMonth, startOfMonth } from "date-fns";
 
 type calendarStore = {
   view: View;

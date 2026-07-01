@@ -17,13 +17,20 @@ function DayView({ event }: Props) {
   return (
     <div
       className="d-flex flex-column h-100"
-      style={{ color: "#212529" }}
       title={`${job?.name}\n${job?.address}`}
+      style={{
+        color: "#212529",
+        cursor: "pointer",
+        pointerEvents: "auto",
+        WebkitTapHighlightColor: "transparent", // Quita el parpadeo gris feo de iOS al tocar
+        userSelect: "none",
+        WebkitUserSelect: "none"
+      }}
     >
       {/* Header con ID y Nombre */}
       <div className="mb-1">
         <span className="text-muted fw-bold" style={{ fontSize: "18px" }}>
-          #{job?.number} 
+          #{job?.number}
         </span>
         <div
           className="fw-bold "
@@ -48,6 +55,8 @@ function DayView({ event }: Props) {
             color: "#0d6efd", // Azul link estándar
             textDecoration: "none",
             fontWeight: "500",
+            zIndex: 10, // Asegura que quede por encima en capas táctiles
+            position: "relative",
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -59,6 +68,9 @@ function DayView({ event }: Props) {
       <div
         className=" pt-2 d-flex flex-wrap gap-1"
         style={{ borderTop: "1px solid #eee" }}
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
       >
         {INDICATORS_CONFIG.map((ind) => {
           const isDone = !!reports[ind.key];

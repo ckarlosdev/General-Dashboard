@@ -11,45 +11,52 @@ import { RiTimelineView } from "react-icons/ri";
 type Props = {};
 
 function JobsList({}: Props) {
-  const { currentRange, isJobFocusMode, selectedJobId } = useCalendarStore();
-  const { toggleJobSelected, jobsSelected, setJobsSelected } =
-    useAssignmentStore();
+
+  const isJobFocusMode = useCalendarStore((state) => state.isJobFocusMode);
+  const selectedJobId = useCalendarStore((state) => state.selectedJobId);
+
+  const currentRangeStartStr = useCalendarStore((state) =>
+    state.currentRange?.start?.toISOString(),
+  );
+  const currentRangeEndStr = useCalendarStore((state) =>
+    state.currentRange?.end?.toISOString(),
+  );
+
+  const toggleJobSelected = useAssignmentStore(
+    (state) => state.toggleJobSelected,
+  );
+  const jobsSelected = useAssignmentStore((state) => state.jobsSelected);
+  const setJobsSelected = useAssignmentStore((state) => state.setJobsSelected);
   const { data: jobsData } = useJobs();
   const { openModal, setSelectedId } = useModalStore();
 
   const { data: events, isLoading } = useEvents(
-    currentRange.start,
-    currentRange.end,
+    currentRangeStartStr ? new Date(currentRangeStartStr) : new Date(),
+    currentRangeEndStr ? new Date(currentRangeEndStr) : new Date(),
     selectedJobId,
     isJobFocusMode,
   );
 
   const uniqueJobs = useMemo(() => {
-    // 1. Validaciones iniciales
-    if (!events || !jobsData || !currentRange?.start || !currentRange?.end)
+    if (!events || !jobsData || !currentRangeStartStr || !currentRangeEndStr)
       return [];
 
     const registry = new Map();
-
-    const rangeStartTs = new Date(currentRange.start).setHours(0, 0, 0, 0);
-    const rangeEndTs = new Date(currentRange.end).setHours(23, 59, 59, 999);
+    const rangeStartTs = new Date(currentRangeStartStr).setHours(0, 0, 0, 0);
+    const rangeEndTs = new Date(currentRangeEndStr).setHours(23, 59, 59, 999);
 
     const filteredEvents = events.filter((event) => {
-      // Caso Modo Enfoque
       if (isJobFocusMode) {
         return selectedJobId
           ? Number(event.jobsId) === Number(selectedJobId)
           : false;
       }
-
       const eventStartTs = new Date(event.start).getTime();
       return eventStartTs >= rangeStartTs && eventStartTs <= rangeEndTs;
     });
 
-    // 3. Mapa de Jobs (O(n))
     const jobsMap = new Map(jobsData.map((j) => [Number(j.jobsId), j]));
 
-    // 4. Registro de únicos
     filteredEvents.forEach((event) => {
       const eJobId = Number(event.jobsId);
       if (!registry.has(eJobId)) {
@@ -64,7 +71,14 @@ function JobsList({}: Props) {
     });
 
     return Array.from(registry.values());
-  }, [events, jobsData, currentRange, isJobFocusMode, selectedJobId]);
+  }, [
+    events,
+    jobsData,
+    currentRangeStartStr,
+    currentRangeEndStr,
+    isJobFocusMode,
+    selectedJobId,
+  ]);
 
   const uniqueJobsSorted = useMemo(() => {
     return [...uniqueJobs].sort((a, b) =>
@@ -72,43 +86,25 @@ function JobsList({}: Props) {
     );
   }, [uniqueJobs]);
 
-  const lastEventsIdsRef = useRef<string>("");
+  const jobsSelectedRef = useRef<number[]>([]);
 
   useEffect(() => {
-    // 1. Si no hay eventos, limpiamos la selección y salimos
-    if (!events || events.length === 0) {
-      if (lastEventsIdsRef.current !== "") {
-        setJobsSelected([]);
-        lastEventsIdsRef.current = "";
-      }
+    jobsSelectedRef.current = jobsSelected;
+  }, [jobsSelected]);
+
+
+  useEffect(() => {
+    if (!events || events.length === 0) return;
+
+    if (isJobFocusMode && selectedJobId) {
+      setJobsSelected([Number(selectedJobId)]);
       return;
     }
 
-    // 2. Lógica para MODO ENFOQUE
-    if (isJobFocusMode && selectedJobId) {
-      // Si estamos en enfoque, forzamos que solo esté seleccionado el job enfocado
-      // Solo actualizamos si no es lo que ya tenemos para evitar bucles
-      if (
-        jobsSelected.length !== 1 ||
-        jobsSelected[0] !== Number(selectedJobId)
-      ) {
-        setJobsSelected([Number(selectedJobId)]);
-      }
-      return; // Salimos para no ejecutar la lógica de modo normal
-    }
+    const allIds = [...new Set(events.map((e) => Number(e.jobsId)))];
 
-    // 3. Lógica para MODO NORMAL (la que ya teníamos)
-    const currentEventsIds = [...new Set(events.map((e) => e.jobsId))]
-      .sort()
-      .join(",");
-
-    if (currentEventsIds !== lastEventsIdsRef.current) {
-      const allIds = [...new Set(events.map((e) => Number(e.jobsId)))];
-      setJobsSelected(allIds);
-      lastEventsIdsRef.current = currentEventsIds;
-    }
+    setJobsSelected(allIds);
   }, [events, isJobFocusMode, selectedJobId, setJobsSelected]);
-  // Importante: añadimos selectedJobId a las dependencias
 
   if (isLoading) return <div>Loading Jobs...</div>;
 

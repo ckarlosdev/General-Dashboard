@@ -44,7 +44,7 @@ function App() {
             </button>
 
             {/* Contenido: Se oculta cuando isOpen es false */}
-            {isOpen && (
+            {/* {isOpen && (
               <div className="sidebar-content">
                 <div className="p-3 border-bottom bg-light">
                   <h5 className="mb-0 fw-bold text-primary">Jobs List</h5>
@@ -53,7 +53,16 @@ function App() {
                   <JobsList />
                 </div>
               </div>
-            )}
+            )} */}
+
+            <div className={`sidebar-content ${!isOpen ? "d-none" : ""}`}>
+              <div className="p-3 border-bottom bg-light">
+                <h5 className="mb-0 fw-bold text-primary">Jobs List</h5>
+              </div>
+              <div className="p-2 flex-grow-1 overflow-auto">
+                <JobsList />
+              </div>
+            </div>
           </aside>
 
           {/* CALENDARIO: Siempre a la derecha, nunca debajo */}
