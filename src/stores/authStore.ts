@@ -20,8 +20,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   refreshToken: storedRefreshToken,
   isAuthenticated: !!storedToken,
 
-  // token: "",
-  // refreshToken: "",
+  // token:
+  //   "",
+  // refreshToken:
+  //   "",
   // isAuthenticated: true,
 
   user: null,
