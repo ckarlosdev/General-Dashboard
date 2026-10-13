@@ -112,6 +112,7 @@ export interface DailyReport {
   manOther: string;
   equipmentOther: string;
   issues: string;
+  createdDate: string;
   employees: DrEmployee[];
   equipments: DrEquipment[];
   rentals: DrRental[];
