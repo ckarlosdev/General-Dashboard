@@ -139,7 +139,7 @@ function DailyModal({}: Props) {
               >
                 <div className="d-flex align-items-center">
                   <div className="me-3">
-                    <BsImages style={{ fontSize: "2rem" }}  />
+                    <BsImages style={{ fontSize: "2rem" }} />
                   </div>
                   <div>
                     <div className="d-flex align-items-center mt-1">
@@ -280,7 +280,7 @@ function DailyModal({}: Props) {
             </Container>
           )}
           <div
-            className="d-flex justify-content-end mt-3"
+            className="d-flex flex-column align-items-end mt-3"
             style={{ marginRight: "20px" }}
           >
             <small
@@ -289,6 +289,28 @@ function DailyModal({}: Props) {
             >
               {"Created by: "}
               {drData?.userName ?? "Unknown"}
+            </small>
+            <small
+              className="text-muted fst-italic fw-light"
+              style={{ fontSize: "0.82rem" }}
+            >
+              {"Created date: "}
+              {drData?.createdDate
+                ? new Date(
+                    // Si la cadena no termina en Z, le aseguramos el formato UTC añadiéndosela
+                    drData.createdDate.endsWith("Z")
+                      ? drData.createdDate
+                      : drData.createdDate.replace(" ", "T") + "Z",
+                  ).toLocaleString("en-US", {
+                    month: "2-digit",
+                    day: "2-digit",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                    timeZone: "America/Chicago",
+                  })
+                : "Unknown"}
             </small>
           </div>
         </Modal.Body>

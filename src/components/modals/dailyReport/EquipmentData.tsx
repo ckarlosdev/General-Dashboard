@@ -17,13 +17,19 @@ function EquipmentData({}: Props) {
   const { data: employees } = useEmployees();
   const { data: equipments } = useEquipments();
 
-  const eTotal =
-    drData && drData.equipments ? equipmentTotals(drData.equipments) : null;
-  const rentals =
-    drData && drData.rentals ? countRentals(drData.rentals) : null;
+  if (!drData) return null;
 
-  const equipTotal =
-    eTotal?.qty || 0 + (rentals ? rentals?.A || 0 + rentals?.E || 0 : 0);
+  const eTotal = Array.isArray(drData?.equipments)
+    ? equipmentTotals(drData.equipments)
+    : { qty: 0, totalHours: 0 };
+  const rentals = Array.isArray(drData?.rentals)
+    ? countRentals(drData.rentals)
+    : { E: 0, A: 0 };
+
+  // CORREGIDO: Uso de paréntesis para evitar errores de operadores lógicos
+  const rentalsTotal = rentals ? (rentals.A ?? 0) + (rentals.E ?? 0) : 0;
+  const equipTotal = (eTotal?.qty ?? 0) + rentalsTotal;
+
   const equipmentList = drData?.equipments ?? [];
   const onlyEquipments = equipmentList.filter((e) => e.type === "Equipment");
   const equipmentsCount = equipmentList.filter(
@@ -57,7 +63,7 @@ function EquipmentData({}: Props) {
             <div style={reportStyles.statBadge}>
               <span style={reportStyles.label}>HOURS</span>
               <span style={reportStyles.value}>
-                {Number(eTotal?.totalHours || 0).toFixed(1)}h
+                {Number(eTotal?.totalHours ?? 0).toFixed(1)}h
               </span>
             </div>
           </div>
@@ -154,7 +160,7 @@ function EquipmentData({}: Props) {
                     color: "#0c4a6e",
                   }}
                 >
-                  <GiMineTruck className="me-1" /> EQ: {rentals?.E || 0}
+                  <GiMineTruck className="me-1" /> EQ: {rentals?.E ?? 0}
                 </span>
                 <span
                   style={{
@@ -164,7 +170,7 @@ function EquipmentData({}: Props) {
                   }}
                 >
                   <BsPaperclip className="me-1" />
-                  AT: {rentals?.A || 0}
+                  AT: {rentals?.A ?? 0}
                 </span>
               </div>
             </div>
@@ -172,9 +178,9 @@ function EquipmentData({}: Props) {
 
           <div style={{ display: "flex", flexDirection: "column" }}>
             {onlyEquipments.map((item) => {
-              const usage =
-                parseFloat(item.newHour || "0") -
-                parseFloat(item.initialHour || "0");
+              const newH = parseFloat(item.newHour || "0");
+              const initH = parseFloat(item.initialHour || "0");
+              const usage = isNaN(newH - initH) ? 0 : newH - initH;
 
               const equipment = equipments?.find(
                 (equip) => equip.equipmentsId === item.equipmentsId,
@@ -183,7 +189,9 @@ function EquipmentData({}: Props) {
                 (employee) => employee.employeesId === item.employeesId,
               );
 
-              const fullName = operator?.firstName + " " + operator?.lastName;
+              const fullName = operator
+                ? `${operator.firstName || ""} ${operator.lastName || ""}`.trim()
+                : "N/A";
 
               return (
                 <div
